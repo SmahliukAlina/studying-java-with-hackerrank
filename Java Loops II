@@ -17,10 +17,9 @@ public class Solution {
         }
 
         for (int k=0; k<q; k++) {
-            int m = 0;
-                int a = arrayArgs[k][m];
-                int b = arrayArgs[k][m+1];
-                int n = arrayArgs[k][m+2];
+                int a = arrayArgs[k][0];
+                int b = arrayArgs[k][1];
+                int n = arrayArgs[k][2];
                 for (int i = 1; i <= n; i++) {
                     int result = a;
                     for (int j = 0; j < i; j++) {
