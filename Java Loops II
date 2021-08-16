@@ -1,0 +1,34 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner scanner = new Scanner(System.in);
+        int q = scanner.nextInt();
+        int[][] arrayArgs = new int[q][3];
+        
+        
+        for (int i=0; i<q ; i++){
+            for (int j=0; j<3; j++){
+                arrayArgs[i][j] = scanner.nextInt();
+            }
+        }
+
+        for (int k=0; k<q; k++) {
+            int m = 0;
+                int a = arrayArgs[k][m];
+                int b = arrayArgs[k][m+1];
+                int n = arrayArgs[k][m+2];
+                for (int i = 1; i <= n; i++) {
+                    int result = a;
+                    for (int j = 0; j < i; j++) {
+                        result = result + b * ((int) Math.pow(2, (j)));
+                    }
+                    System.out.print(result + " ");
+                }
+                System.out.println();
+            }
+    }
+}
