@@ -1,0 +1,33 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner scanner  = new Scanner(System.in);
+        String s = scanner.next();
+        int k = scanner.nextInt();
+
+        String[] subs = new String[s.length()-k+1];
+        for (int i=0; i< subs.length; i++){
+            subs[i] = s.substring(i,i+k);
+        }
+
+        String tempo = " ";
+        Boolean checker = true;
+        while (checker) {
+            checker = false;
+            for (int i = 0; i < subs.length-1; i++) {
+                if (subs[i].compareTo(subs[i + 1]) > 0) {
+                    tempo = subs[i];
+                    subs[i] = subs[i + 1];
+                    subs[i + 1] = tempo;
+                    checker = true;
+                }
+            }
+        }
+
+        System.out.println(subs[0]+ "\n" + subs[subs.length-1]);
+    }
+}
