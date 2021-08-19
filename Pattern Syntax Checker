@@ -1,0 +1,30 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner scanner = new Scanner(System.in);
+        int N = scanner.nextInt();
+        scanner.nextLine();
+        String[] s = new String[N];
+        for (int i=0; i<N; i++){
+            s[i] = scanner.nextLine();
+        }
+        scanner.close();
+
+        for (int i=0; i<N; i++){
+            try {
+                Pattern.compile(s[i]);
+                System.out.println("Valid");
+            }
+            catch (PatternSyntaxException e){
+                e.getMessage();
+                System.out.println("Invalid");
+            }
+        }
+    }
+}
