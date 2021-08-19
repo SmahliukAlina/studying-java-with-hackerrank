@@ -1,0 +1,55 @@
+import java.util.Scanner;
+
+public class Solution {
+
+    static boolean isAnagram(String a, String b) {
+        // Complete the function
+        char[] aLetters = new char[a.length()];
+        char[] bLetters = new char[b.length()];
+        a.toLowerCase().getChars(0,a.length(),aLetters,0);
+        b.toLowerCase().getChars(0,b.length(),bLetters,0);
+
+        boolean checker = true;
+        char tempo;
+        while (checker){
+            checker = false;
+            for (int i=0; i< aLetters.length-1; i++){
+                if (Character.compare(aLetters[i],aLetters[i+1])>0){
+                    tempo = aLetters[i];
+                    aLetters[i] = aLetters[i+1];
+                    aLetters[i+1] = tempo;
+                    checker = true;
+                }
+            }
+        }
+        String aString = new String(aLetters);
+
+        checker = true;
+        while (checker){
+            checker = false;
+            for (int i=0; i< bLetters.length-1; i++){
+                if (Character.compare(bLetters[i],bLetters[i+1])>0){
+                    tempo = bLetters[i];
+                    bLetters[i] = bLetters[i+1];
+                    bLetters[i+1] = tempo;
+                    checker = true;
+                }
+            }
+        }
+        String bString = new String(bLetters);
+        
+        if (aString.equals(bString)) return true;
+        else return false;
+
+    }
+
+    public static void main(String[] args) {
+    
+        Scanner scan = new Scanner(System.in);
+        String a = scan.next();
+        String b = scan.next();
+        scan.close();
+        boolean ret = isAnagram(a, b);
+        System.out.println( (ret) ? "Anagrams" : "Not Anagrams" );
+    }
+}
