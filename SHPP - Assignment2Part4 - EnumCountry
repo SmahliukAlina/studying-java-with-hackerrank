@@ -1,0 +1,53 @@
+package com.shpp.p2p.cs.asmahliuk.assignment2;
+
+import java.awt.*;
+
+public enum Country {
+    ARMENIA ("Armenia", Color.RED, Color.BLUE, Color.ORANGE),
+    AUSTRIA ("Austria", Color.RED, Color.WHITE , Color.RED),
+    BELGIUM ("Belgium", Color.BLACK, Color.YELLOW, Color.RED),
+    BULGARIA ("Bulgaria", Color.WHITE, Color.GREEN, Color.RED),
+    CHAD ("Chad", Color.BLUE, Color.YELLOW, Color.RED),
+    GABON ("Gabon", Color.GREEN, Color.YELLOW, Color.BLUE),
+    GUINEE ("Guinee", Color.RED, Color.YELLOW, Color.GREEN),
+    GERMANY ("Germany", Color.BLACK, Color.RED, Color.YELLOW),
+    IRELAND ("Ireland", Color.GREEN, Color.WHITE, Color.ORANGE),
+    ITALY ("Italy", Color.GREEN, Color.WHITE, Color.RED),
+    MALI ("Mali", Color.GREEN, Color.YELLOW, Color.RED),
+    LITHUANIA("Lithuania", Color.YELLOW, Color.GREEN, Color.RED),
+    LUXEMBOURG ("Luxembourg", Color.RED, Color.WHITE, Color.BLUE),
+    NETHERLANDS ("Netherlands", Color.RED, Color.WHITE, Color.BLUE),
+    NIGERIA ("Nigeria", Color.GREEN, Color.WHITE, Color.GREEN),
+    PERU ("Peru", Color.RED, Color.WHITE, Color.RED),
+    ROMANIA ("Romania", Color.BLUE, Color.YELLOW, Color.RED),
+    RUSSIA ("Russia", Color.WHITE, Color.BLUE, Color.RED),
+    FRANCE ("France", Color.BLUE, Color.WHITE, Color.RED),
+    YEMEN ("Yemen", Color.RED, Color.WHITE, Color.BLACK);
+
+    private final String countryName;
+    private final Color firstColor;
+    private final Color secondColor;
+    private final Color thirdColor;
+
+    Country(String countryName, Color firstColor, Color secondColor, Color thirdColor) {
+        this.countryName = countryName;
+        this.firstColor = firstColor;
+        this.secondColor = secondColor;
+        this.thirdColor = thirdColor;
+    }
+
+    public String getCountryName(){
+        return countryName;
+    }
+
+    public Color getFirstColor(){
+        return firstColor;
+    }
+    public Color getSecondColor(){
+        return secondColor;
+    }
+    public Color getThirdColor(){
+        return thirdColor;
+    }
+
+}
