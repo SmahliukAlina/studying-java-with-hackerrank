@@ -1,0 +1,95 @@
+package com.shpp.p2p.cs.asmahliuk.assignment2;
+
+import acm.graphics.GOval;
+import acm.graphics.GRect;
+import com.shpp.cs.a.graphics.WindowProgram;
+
+import java.awt.*;
+
+/* File: Assignment2Part2.java
+ * ----------------------------------
+ * This program is created for drawing an optical illusion, also known as Kanizsa square.
+ * It is consists of 5 elements:
+ *  - 4 black circles, located at each corner of application field,
+ * and field sides, forming corner, are tangent to circles,
+ *  - 1 white rectangle (usually it is square), and its vertices coincide with centers of circles.
+ *
+ * User can set diameter of circles, using corresponding constant CIRCLE_DIAMETER.
+ */
+
+public class Assignment2Part2 extends WindowProgram {
+
+    /*
+    * These constants set approximate width and height of the application window.
+     */
+    public static final int APPLICATION_WIDTH = 300;
+    public static final int APPLICATION_HEIGHT = 300;
+
+    /* This constant sets diameter of 4 circles, size and location of square depends on it also. */
+    private static final double CIRCLE_DIAMETER = 100;
+
+    public void run() {
+
+        /* This part of method draws 4 basic black circles. */
+        drawCircles();
+
+        /* This part of method draws white rectangle, depends on circles centers location. */
+        drawRectangle(CIRCLE_DIAMETER/2,
+                CIRCLE_DIAMETER/2,
+                getWidth()-CIRCLE_DIAMETER,
+                getHeight()-CIRCLE_DIAMETER);
+
+    }
+
+    /*
+    * This method draws 4 circles using parametrized method drawCircle().
+     */
+    private void drawCircles(){
+        drawCircle(0, 0, CIRCLE_DIAMETER);
+        drawCircle(0, getHeight()-CIRCLE_DIAMETER, CIRCLE_DIAMETER);
+
+        drawCircle(getWidth()-CIRCLE_DIAMETER, 0, CIRCLE_DIAMETER);
+        drawCircle(getWidth()-CIRCLE_DIAMETER, getHeight()-CIRCLE_DIAMETER,CIRCLE_DIAMETER);
+    }
+
+    /* Method, drawing circle by given parameters using GOval, and coloring it with additional method.
+    *
+    * @param xUpperLeftCorner specifies x-coordinate of upper-left corner of bounding box of circle.
+    * @param yUpperLeftCorner specifies y-coordinate of upper-left corner of bounding box of circle.
+    * @param circleDiameter is set by constant CIRCLE_DIAMETER.
+    * */
+    private void drawCircle(double xUpperLeftCorner, double yUpperLeftCorner, double circleDiameter) {
+        GOval circle = new GOval(xUpperLeftCorner, yUpperLeftCorner, circleDiameter,circleDiameter);
+        colorCircle(circle, Color.BLACK);
+        add(circle);
+    }
+
+    /* Method, drawing rectangle by given parameters, depends on circles diameter and size of appField,
+     * using GRect, and coloring it with additional method.
+     *
+     * @param xUpperLeftCorner specifies x-coordinate of upper-left corner of bounding box of rectangle.
+     * @param yUpperLeftCorner specifies y-coordinate of upper-left corner of bounding box of rectangle.
+     * @param rectXSide specifies width of the rectangle.
+     * @param rectYSide specifies height of the rectangle.
+     */
+    private void drawRectangle(double xOfUpperLeftCorner, double yOfUpperLeftCorner, double rectXSide, double rectYSide) {
+        GRect square = new GRect(xOfUpperLeftCorner,yOfUpperLeftCorner,rectXSide, rectYSide);
+        colorRectangle(square, Color.WHITE);
+        add(square);
+    }
+
+    /* Additional method helps to color circles with chosen color. */
+    private void colorCircle(GOval figure, Color color){
+        figure.setColor(color);
+        figure.setFilled(true);
+        figure.setFillColor(color);
+    }
+
+    /* Additional method helps to color rectangle with chosen color. */
+    private void colorRectangle(GRect figure, Color color){
+        figure.setColor(color);
+        figure.setFilled(true);
+        figure.setFillColor(color);
+    }
+
+}
