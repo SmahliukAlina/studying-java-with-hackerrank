@@ -1,0 +1,265 @@
+package com.shpp.p2p.cs.asmahliuk.assignment2;
+
+import acm.graphics.GLabel;
+import acm.graphics.GRect;
+import com.shpp.cs.a.graphics.WindowProgram;
+
+import java.awt.*;
+
+/*
+ * File: Assignment2Part4.java
+ * ----------------------------------
+ * This program is created for drawing tricolor flags of country
+ * with writing the name of the country at bottom-right corner of application window.
+ *
+ * You can choose wanted country by using tips from Enum Country,
+ * and use this Enum to find colors of chosen country flag,
+ * OR you can write country name by yourself, so as choose colors.
+ *
+ * Horizontal or vertical direction of flag lines depends on chosen/written country name
+ * or if country name is not in the list of Enum Country
+ * (also this list was used for methods isHorizontalLinesDirection() or isVerticalLinesDirection())
+ * direction of flag lines sets by constant IS_HORIZONTAL_FLAG.
+ */
+public class Assignment2Part4 extends WindowProgram {
+
+    /*
+     * These constants set approximate width and height of the application window.
+     */
+    public static final int APPLICATION_WIDTH = 550;
+    public static final int APPLICATION_HEIGHT = 300;
+
+    /*
+     * These constants specifying size of flag.
+     */
+    private static final double FLAG_WIDTH = 240;
+    private static final double FLAG_HEIGHT = 200;
+
+    /*
+    * These constants can be set by using tips from Enum Country:
+    *  - COUNTRY by method getCountryName(),
+    *  - FIRST_COLOR by method getFirstColor(),
+    *  - SECOND_COLOR by method getSecondColor(),
+    *  - THIRD_COLOR by method getThirdColor(),
+    * in this case you should not use constant IS_HORIZONTAL_FLAG,
+    * direction will be set by program.
+    *
+    * OR
+    *
+    * you can write any other country name, and set wanted colors by yourself,
+    * also in this case you can use constant IS_HORIZONTAL_FLAG,
+    * which can have value:
+    *  - true - if you want to draw flag in horizontal direction,
+    *  - false - if you want to draw flag vertical direction.
+    * Note: if you write country name which is presented at methods
+    * isHorizontalLinesDirection() or isVerticalLinesDirection():
+    * direction will be set by program.
+    */
+    private static final String COUNTRY = Country.ARMENIA.getCountryName();
+
+    private static final Color FIRST_COLOR = Country.ARMENIA.getFirstColor();
+    private static final Color SECOND_COLOR = Country.ARMENIA.getSecondColor();
+    private static final Color THIRD_COLOR = Country.ARMENIA.getThirdColor();
+
+    private static final boolean IS_HORIZONTAL_FLAG = true;
+
+    /*
+    * Main method.
+    * Draws flag by values set by the constants COUNTRY, FIRST_COLOR, SECOND_COLOR, THIRD_COLOR.
+     */
+    public void run() {
+        drawFlagOf(COUNTRY, FIRST_COLOR, SECOND_COLOR, THIRD_COLOR);
+    }
+    
+    /*
+    * This method draws flag with given parameters.
+     */
+    private void drawFlagOf(String country, Color firstColor, Color secondColor, Color thirdColor) {
+
+        /* This part of method checks if country name, got by parameter country, is presented
+        * at the methods isHorizontalLinesDirection() or isVerticalLinesDirection(),
+        * (no matter, it was written by user or chosen by tips from Enum Country)
+        * anf if it is true and depends on which method have this country name -
+        * draws flag with lines in corresponding direction.
+         */
+        if (isHorizontalLinesDirection(country)){
+            drawHorizontalFlag (firstColor, secondColor, thirdColor);
+        }
+        else if (isVerticalLinesDirection(country)){
+            drawVerticalFlag (firstColor, secondColor, thirdColor);
+        }
+
+        /* This part of method used if user set country name which is NOT presented
+         * at the methods isHorizontalLinesDirection() or isVerticalLinesDirection(),
+         * it checks is constant IS_HORIZONTAL_FLAG is true and depends on it -
+         * draws flag with lines in corresponding direction.
+         * Adds informing text, that user choose country not from the list.
+         */
+        else {
+            if (IS_HORIZONTAL_FLAG){
+                drawHorizontalFlag(firstColor, secondColor, thirdColor);
+            }
+            else {
+                drawVerticalFlag(firstColor, secondColor, thirdColor);
+            }
+            writeInformingText();
+        }
+        
+        /*
+        * Writes "Country of ..." at bottom-right corner of application window.
+         */
+        writeCountryName(country);
+    }
+
+    /*
+    * Method returns true if value of parameter is present,
+    * also it means that flag would be drawn with horizontal lines.
+     */
+    private boolean isHorizontalLinesDirection(String country){
+        return country.contentEquals("Armenia") ||
+                country.contentEquals("Austria") ||
+                country.contentEquals("Bulgaria") ||
+                country.contentEquals("Gabon") ||
+                country.contentEquals("Germany") ||
+                country.contentEquals("Lithuania") ||
+                country.contentEquals("Luxembourg") ||
+                country.contentEquals("Netherlands") ||
+                country.contentEquals("Russia") ||
+                country.contentEquals("Yemen");
+    }
+
+    /*
+     * Method returns true if value of parameter is present,
+     * also it means that flag would be drawn with vertical lines.
+     */
+    private boolean isVerticalLinesDirection (String country){
+        return country.contentEquals("France") ||
+                country.contentEquals("Belgium") ||
+                country.contentEquals("Chad") ||
+                country.contentEquals("Guinee") ||
+                country.contentEquals("Ireland") ||
+                country.contentEquals("Italy") ||
+                country.contentEquals("Mali") ||
+                country.contentEquals("Nigeria") ||
+                country.contentEquals("Peru") ||
+                country.contentEquals("Romania");
+    }
+
+    /*
+    * This method writes phrase "Country of *", 
+    * where is * - name of chosen country from the parameter.
+    * Phrase is located at bottom-right corner of application window.
+     */
+    private void writeCountryName(String country){
+        GLabel countryName = new GLabel("Flag of ".concat(country));
+        countryName.setFont("Serif-20");
+        countryName.setLocation(getWidth() - countryName.getWidth(), getHeight() - countryName.getDescent());
+        add(countryName);
+    }
+
+    /*
+    * This method writes informing phrase if user choose country which is not in the list.
+     */
+    private void writeInformingText(){
+        GLabel sorryLabel1 = new GLabel("Name of country and colors chosen by user without tips from program.");
+        sorryLabel1.setFont("Serif-15");
+        sorryLabel1.setLocation(5, sorryLabel1.getAscent()+5);
+        add(sorryLabel1);
+    }
+
+    /*
+    * These methods calculate coordinates (x,y) of upper-left corner of flag
+    * to locate flag at the center of application field,
+    * depends on size of flag set by constants and size of application window.
+     */
+    private double getXUpperLeftCornerOfFlag(){
+        return getWidth()/2 - FLAG_WIDTH/2;
+    }
+    private double getYUpperLeftCornerOfFlag() { return getHeight()/2 - FLAG_HEIGHT /2; }
+
+    /*
+     * This method draws flag with lines at vertical direction with chosen colors,
+     * and corresponding coordinates (x,y) of upper-left corner of each line.
+     */
+    private void drawVerticalFlag (Color firstColor,
+                                   Color secondColor,
+                                   Color thirdColor){
+
+        drawVerticalFlagLine(getXUpperLeftCornerOfFlag(),
+                getYUpperLeftCornerOfFlag(),
+                firstColor);
+
+        drawVerticalFlagLine(getXUpperLeftCornerOfFlag()+ FLAG_WIDTH/3,
+                getYUpperLeftCornerOfFlag(),
+                secondColor);
+
+        drawVerticalFlagLine(getXUpperLeftCornerOfFlag()+ (2* FLAG_WIDTH/3),
+                getYUpperLeftCornerOfFlag(),
+                thirdColor);
+    }
+    
+    /*
+    * This method draws vertical line of flag,
+    * as a rectangle with dimensions depends on size of flag.
+    * @param xPosition specifies x-coordinate of upper-left corner of line,
+    * @param yPosition specifies y-coordinate of upper-left corner of line,
+    * @param color specifies color of line and used at additional method colorFlagLine().
+     */
+    private void drawVerticalFlagLine(double xPosition,
+                                      double yPosition,
+                                      Color color){
+        GRect verticalLine = new GRect(xPosition, yPosition, FLAG_WIDTH/3, FLAG_HEIGHT);
+        colorTheFlagLine(verticalLine, color);
+        add(verticalLine);
+    }
+
+    /*
+     * This method draws flag with lines at horizontal direction with chosen colors,
+     * and corresponding coordinates (x,y) of upper-left corner of each line.
+     */
+    private void drawHorizontalFlag(Color firstColor,
+                                    Color secondColor,
+                                    Color thirdColor ){
+
+        drawHorizontalFlagLine( getXUpperLeftCornerOfFlag(),
+                getYUpperLeftCornerOfFlag(),
+                firstColor );
+
+        drawHorizontalFlagLine( getXUpperLeftCornerOfFlag(),
+                getYUpperLeftCornerOfFlag() + FLAG_HEIGHT/3,
+                secondColor );
+
+        drawHorizontalFlagLine(getXUpperLeftCornerOfFlag(),
+                getYUpperLeftCornerOfFlag() + (2* FLAG_HEIGHT/3),
+                thirdColor);
+    }
+
+    /*
+     * This method draws horizontal line of flag,
+     * as a rectangle with dimensions depends on size of flag.
+     * @param xPosition specifies x-coordinate of upper-left corner of line,
+     * @param yPosition specifies y-coordinate of upper-left corner of line,
+     * @param color specifies color of line and used at additional method colorFlagLine().
+     */
+    private void drawHorizontalFlagLine(double xPosition,
+                                        double yPosition,
+                                        Color color ){
+        GRect horizontalLine = new GRect(xPosition,
+                yPosition,
+                FLAG_WIDTH,
+                FLAG_HEIGHT/3);
+        colorTheFlagLine(horizontalLine,color);
+        add( horizontalLine );
+    }
+
+    /*
+    * This method colors flag line:
+    * @param line specifies the figure to color,
+    * @param color specifies the color to use.
+     */
+    private void colorTheFlagLine(GRect line, Color color){
+        line.setColor(color);
+        line.setFillColor(color);
+        line.setFilled(true);
+    }
+}
