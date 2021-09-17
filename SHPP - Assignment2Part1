@@ -1,0 +1,93 @@
+package com.shpp.p2p.cs.asmahliuk.assignment2;
+
+/*
+ * File: Assignment2Part1.java
+ * ----------------------------------
+ * This program is created for solving Quadratic Equation (finding its roots).
+ *
+ * According to algebraic rules standard form of the quadratic equation is:
+ *  a*x^2 + b*x + c = 0,
+ * where is coefficients a, b, c are known numbers.
+ *  - a - first coefficient;
+ *  - b - second coefficient;
+ *  - c - third coefficient, constant or free term.
+ *
+ * And a (first coefficient) cannot be equal 0,
+ * because in this case we have linear equation not a quadratic.
+ *
+ * In this solution was used Quadratic Formula:
+ *  firstRoot = (-b + sqrt (b^2 - 4*a*c))/(2*a),
+ *  secondRoot = (-b - sqrt (b^2 - 4*a*c))/(2*a),
+ * where is (b^2 - 4*a*c) = Discriminant.
+ * Depends on value of square root of Discriminant
+ * quadratic equation can have two roots, one root or have no real roots.
+ */
+
+public class Assignment2Part1 extends MyTextProgram {
+
+    public void run (){
+
+        /*
+        * Get values of coefficients and free term using console input.
+         */
+        double firstCoefficient = readDouble("Please enter a: ");
+        double secondCoefficient = readDouble("Please enter b: ");
+        double freeTerm = readDouble("Please enter c: ");
+
+        /*
+        * Get a solution for quadratic equation.
+         */
+        solvingQuadraticEquation(firstCoefficient, secondCoefficient, freeTerm);
+    }
+
+    /*
+    * This method solves Quadratic Equation with given input using Quadratic Formula.
+     */
+    private void solvingQuadraticEquation(double firstCoefficient, double secondCoefficient, double freeTerm) {
+
+        /*
+        * Despite precondition for input firstCoefficient != 0,
+        * checking if user make a mistake, and enter 0 as a first coefficient.
+         */
+        if (firstCoefficient == 0) {
+            println("It isn`t quadratic equation. First coefficient can`t be equal 0.");
+        }
+
+        /*
+        * If input was right, solving Quadratic Equation
+         */
+        else {
+
+            /*
+            * Calculating Discriminant in additional method.
+             */
+            double Discriminant = calculateDiscriminant(firstCoefficient, secondCoefficient, freeTerm);
+
+            /*
+            * Get a solution depends on value of square root of Discriminant.
+             */
+            if (Math.sqrt(Discriminant) > 0){
+
+                double firstRoot = (-secondCoefficient + Math.sqrt (Discriminant)) /  (2*firstCoefficient);
+                double secondRoot = (-secondCoefficient - Math.sqrt (Discriminant)) /  (2*firstCoefficient);
+
+                System.out.printf("There are two roots: %,.1f and %,.1f.", firstRoot, secondRoot);
+            }
+            else if (Math.sqrt(Discriminant) == 0){
+
+                double doubleRoot = (-secondCoefficient) / (2*firstCoefficient);
+                System.out.printf("There is one root: %,.1f.", doubleRoot);
+            }
+            else {
+                System.out.println("There are no real roots.");
+            }
+        }
+    }
+
+    /*
+    * This is additional method calculates Discriminant for further solution.
+     */
+    private double calculateDiscriminant(double firstCoefficient, double secondCoefficient, double freeTerm){
+        return secondCoefficient * secondCoefficient - 4 * firstCoefficient * freeTerm;
+    }
+}
