@@ -1,0 +1,455 @@
+package com.shpp.p2p.cs.asmahliuk.assignment4;
+
+import acm.graphics.*;
+import acm.util.RandomGenerator;
+import com.shpp.cs.a.graphics.WindowProgram;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+
+/**
+ * File: Breakout.java
+ * ----------------------------------
+ * This program is making game called Breakout.
+ * User controlling a paddle, and hit the ball by it.
+ * The main task is to clear field from the bricks, hitting them by the ball.
+ */
+
+public class Breakout extends WindowProgram {
+
+    /** Width and height of application window in pixels */
+    public static final int APPLICATION_WIDTH = 400;
+    public static final int APPLICATION_HEIGHT = 600;
+
+    /** Dimensions of game board (usually the same) */
+    private static final int WIDTH = APPLICATION_WIDTH;
+    private static final int HEIGHT = APPLICATION_HEIGHT;
+
+    /** Dimensions of the paddle */
+    private static final int PADDLE_WIDTH = 60;
+    private static final int PADDLE_HEIGHT = 10;
+
+    /** Offset of the paddle up from the bottom */
+    private static final int PADDLE_Y_OFFSET = 30;
+
+    /** Number of bricks per row */
+    private static final int N_BRICKS_PER_ROW = 10;
+
+    /** Number of rows of bricks */
+    private static final int N_BRICK_ROWS = 10;
+
+    /** Separation between bricks */
+    private static final int BRICK_SEP = 4;
+
+    /** Width of a brick */
+    private static final int BRICK_WIDTH =
+            (WIDTH - (N_BRICKS_PER_ROW - 1) * BRICK_SEP) / N_BRICKS_PER_ROW;
+
+    /** Height of a brick */
+    private static final int BRICK_HEIGHT = 8;
+
+    /** Radius of the ball in pixels */
+    private static final int BALL_RADIUS = 10;
+    private static final int BALL_DIAMETER = BALL_RADIUS * 2;
+
+    /** Offset of the top brick row from the top */
+    private static final int BRICK_Y_OFFSET = 70;
+
+    /** Number of turns */
+    private static final int N_TURNS = 3;
+
+    /** Velocity by x- and y- axis at the beginning of each turn. */
+    private static final double START_HORIZONTAL_VELOCITY = 0.0;
+    private static final double START_VERTICAL_VELOCITY = 3.0;
+
+
+    /** The amount of time to pause between frames (48fps). */
+    private static final double PAUSE_TIME = 1000.0 / 48;
+
+    /*** The amount of time to pause after end game, before next game starts */
+    private static final double PAUSE_END_GAME = 3000.0;
+
+    /** The amount of bricks on field */
+    private static final int BRICKS_AMOUNT = N_BRICK_ROWS * N_BRICKS_PER_ROW;
+
+    /** Variable to save paddle after mouse pressing on it, and controlling by mouse movements */
+    private GObject selectedPaddle;
+
+    /** Variables for velocity of ball by x- and y-axe, respectively */
+    double vx, vy;
+    int bricksCounter = BRICKS_AMOUNT;
+
+    /**
+     * Runs main method.
+     */
+    @Override
+    public void run() {
+
+        GRect thisPaddle = makePaddle();
+        selectedPaddle = thisPaddle;
+
+        while (true) {
+            drawStartField(thisPaddle);
+            playGame(thisPaddle);
+            endGame();
+        }
+    }
+
+
+    /**
+     * Performs need acts before start game:
+     *  - draws grid of bricks,
+     *  - adds paddle to the canvas,
+     *
+     * @param paddle - paddle to play.
+     */
+    private void drawStartField(GRect paddle) {
+
+        drawBricksGrid(N_BRICK_ROWS, N_BRICKS_PER_ROW);
+        add(paddle);
+    }
+
+
+    /**
+     * Plays game until amount of turns equals 0 or
+     * there are no bricks left at canvas (relatively to brick counter),
+     * and applies corresponding method - winGame or gameOver.
+     *
+     * @param paddle - paddle to play.
+     */
+    private void playGame(GRect paddle) {
+
+        int turnsCount = 0;
+        GOval ball;
+
+        for (int nTurns = N_TURNS; nTurns >= 1 ; nTurns--){
+
+            ball = makeBall();
+            add(ball);
+            waitForClick();
+            addMouseListeners();
+
+
+            bricksCounter = (playTurn(ball, paddle));
+            if (bricksCounter == 0){
+                winGame();
+                break;
+            }
+            else{
+                turnsCount++;
+            }
+        }
+
+        if (turnsCount == N_TURNS){
+            gameOver();
+        }
+    }
+
+    /**
+     * Plays turn until User removes all the bricks from canvas (bricks-counter became equals 0)
+     * or ball misses the paddle (ball hits the down wall).
+     *
+     * Performs events corresponding ball hits different object at canvas:
+     *  - if ball hits left or right wall - ball moves with reversed by x-axe velocity,
+     *  - if ball hits top wall - ball moves with reversed by x-axe velocity,
+     *  - if ball hits the paddle - ball moves with reversed by y-axe velocity,
+     *  - if ball hits brick (object at canvas differ from paddle or turns counting label) -
+     *      removes brick (decreases bricks-counter by 1) and ball moves with reversed by y-axe velocity.
+     *
+     * @param ball - ball to play.
+     * @param paddle - paddle to play.
+     *
+     * @return the amount of bricks left at the canvas after turn.
+     * */
+    private int playTurn(GOval ball, GRect paddle) {
+
+
+        GObject collider;
+        vx = getVx();
+        vy = - START_VERTICAL_VELOCITY;
+
+        while (!isBallHitDown(ball) && bricksCounter != 0){
+
+            ball.move(vx,vy);
+
+            collider = getCollidingObject(ball);
+
+            if (isBallHitTop(ball)){
+                vy = -vy;
+            }
+            else if (isBallHitLeft(ball) || isBallHitRight(ball)){
+                vx = -vx;
+            }
+            else if (isBallHitDown(ball)){
+                remove(ball);
+            }
+            else if (collider == paddle && vy > 0){
+                    vy = -vy;
+            }
+            else if (collider != null && collider != paddle){
+                remove(collider);
+                bricksCounter--;
+                vy = -vy;
+            }
+
+            pause(PAUSE_TIME);
+        }
+
+        return bricksCounter;
+    }
+
+
+    /** Adds label with win text if User wins */
+    private void winGame(){
+        GLabel winLabel = makeWinLabel();
+        add(winLabel);
+    }
+
+    /** Adds label with game over text if User loose */
+    private void gameOver(){
+        GLabel gameOverLabel = makeGameOverLabel();
+        add(gameOverLabel);
+    }
+
+    /** Waits the amount of time set by corresponding constant.
+     * Performs need acts after game is ended - clears canvas from all the objects,
+     * and set bricksCounter to the start amount of bricks.*/
+    private void endGame() {
+        pause(PAUSE_END_GAME);
+        removeAll();
+        bricksCounter = BRICKS_AMOUNT;
+    }
+
+    /**
+    * @return value of horizontal velocity, generated with help of Random generator.
+     */
+    private double getVx(){
+        RandomGenerator rGen = RandomGenerator.getInstance();
+        double vx = rGen.nextDouble(1.0, 3.0);
+        if (rGen.nextBoolean(0.5))
+            vx = -vx;
+        return vx;
+    }
+
+    /**
+     * Checks if ball colliding with some elements by 1 from 4 points and returns it.
+    * @return object which was collided with the ball or null.
+     */
+    private GObject getCollidingObject(GOval ball){
+        if (getColliderLeftUp(ball) != null) {
+            return getColliderLeftUp(ball);
+        }
+         else if (getColliderRightUp(ball) != null){
+             return getColliderRightUp(ball);
+        }
+         else if (getColliderLeftDown(ball) != null){
+             return getColliderLeftDown(ball);
+        }
+         else if (getColliderRightDown(ball) != null){
+             return getColliderRightDown(ball);
+        }
+         else {
+             return null;
+         }
+    }
+
+    /**
+     * Checks if ball hits some other object by its upper-left corner
+     *
+     * @return object if ball hits some other by its upper-left corner or null if it doesn`t.
+     */
+    private GObject getColliderLeftUp(GOval ball){
+        if (getElementAt(ball.getX(), ball.getY()) != null){
+            return getElementAt(ball.getX(), ball.getY());
+        }
+        else return null;
+    }
+
+    /**
+     * Checks if ball hits some other object by its upper-right corner
+     *
+     * @return object if ball hits some other by its upper-right corner or null if it doesn`t.
+     */
+    private GObject getColliderRightUp(GOval ball){
+        if (getElementAt(ball.getX() + BALL_DIAMETER, ball.getY()) != null) {
+            return getElementAt(ball.getX() + BALL_DIAMETER, ball.getY());
+        }
+        else return null;
+    }
+
+    /**
+     * Checks if ball hits some other object by its down-left corner
+     *
+     * @return object if ball hits some other by its down-left corner or null if it doesn`t.
+     */
+    private GObject getColliderLeftDown(GOval ball){
+        if (getElementAt(ball.getX(), ball.getY() + BALL_DIAMETER) != null){
+            return getElementAt(ball.getX(), ball.getY() + BALL_DIAMETER);
+        }
+        else return null;
+    }
+
+    /**
+     * Checks if ball hits some other object by its down-right corner
+     *
+     * @return object if ball hits some other by its down-right corner or null if it doesn`t.
+     */
+    private GObject getColliderRightDown(GOval ball){
+        if (getElementAt(ball.getX() + BALL_DIAMETER, ball.getY() + BALL_DIAMETER) != null){
+            return getElementAt(ball.getX() + BALL_DIAMETER, ball.getY() + BALL_DIAMETER);
+        }
+        else return null;
+    }
+
+    /**
+    * Return true if ball hits corresponding walls.
+     */
+    private boolean isBallHitTop(GOval ball) { return ball.getY() <= 0; }
+
+    private boolean isBallHitDown(GOval ball) { return ball.getY()+ball.getHeight() >= getHeight(); }
+
+    private boolean isBallHitLeft(GOval ball) { return ball.getX() <= 0; }
+
+    private boolean isBallHitRight(GOval ball) { return ball.getX()+ball.getWidth() >= getWidth(); }
+
+    /**
+     * Moves selectedPaddle relatively to mouse movements.
+     */
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if (selectedPaddle != null){
+            double newX = e.getX() - selectedPaddle.getWidth()/2.0;
+            if (newX <= 0){
+                selectedPaddle.setLocation(0, selectedPaddle.getY());
+            }
+            else if (newX+selectedPaddle.getWidth() >= getWidth()){
+                selectedPaddle.setLocation(getWidth()-selectedPaddle.getWidth(), selectedPaddle.getY());
+            }
+            else {
+                selectedPaddle.setLocation(newX, selectedPaddle.getY());
+            }
+        }
+    }
+
+    /**
+     * Makes paddle filled by default color
+     * @return paddle with dimensions set by corresponding constants.
+     */
+    private GRect makePaddle(){
+        GRect paddle = new GRect((getWidth() - PADDLE_WIDTH)/2.0,
+                getHeight()-PADDLE_HEIGHT-PADDLE_Y_OFFSET,
+                PADDLE_WIDTH,
+                PADDLE_HEIGHT);
+        paddle.setFilled(true);
+        return paddle;
+    }
+
+    /**
+     * @return ball with dimensions set by corresponding constants.
+     */
+    private GOval makeBall(){
+        GOval ball = new GOval(getWidth()/2.0-BALL_RADIUS,
+                getHeight() - PADDLE_Y_OFFSET - PADDLE_HEIGHT - BALL_DIAMETER,
+                BALL_DIAMETER,
+                BALL_DIAMETER);
+        ball.setFilled(true);
+        return ball;
+    }
+
+    /**
+     * Draws brick grid by rows.
+     * Initializes y-coordinate of upper-side of a brick row with corresponding constant.
+     *
+     * @param nBrickRows - amount of bricks rows
+     * @param nBricksPerRow - amount of bricks per row
+     */
+    private void drawBricksGrid(int nBrickRows, int nBricksPerRow) {
+        double yRow = BRICK_Y_OFFSET;
+        for (int i = 0 ; i < nBrickRows ; i++){
+            drawBrickRow(i, nBricksPerRow, yRow);
+            yRow += (BRICK_HEIGHT + BRICK_SEP);
+        }
+    }
+
+    /**
+     * Draws brick row by bricks.
+     * Initializes x-coordinate of upper-left corner of each brick in row with additional method.
+     * Uses additional method getRowColor() to choose which color needs to be used to paint bricks depending on row number.
+     *
+     * @param rowNumber - number of row
+     * @param nBricksPerRow - amount of bricks per row
+     * @param yRow - y-coordinate of upper-left corner of first brick in a row.
+     */
+    private void drawBrickRow(int rowNumber, int nBricksPerRow, double yRow) {
+        double xBrick = xStartGridDraw();
+        for (int i = 0 ; i < nBricksPerRow ; i++){
+            drawBrick(xBrick, yRow, getRowColor(rowNumber));
+            xBrick += (BRICK_WIDTH+BRICK_SEP);
+        }
+    }
+
+    /**
+     * Draws brick with dimensions set by corresponding constants and adds it to the canvas.
+     *
+     * @param xBrick - x-coordinate of upper-left corner of brick.
+     * @param yBrick - y-coordinate of upper-left corner of brick.
+     * @param brickColor - brick must be painted with this color, corresponding to brick`s place in a grid.
+     */
+    private void drawBrick(double xBrick, double yBrick, Color brickColor) {
+        GRoundRect brick = new GRoundRect(xBrick, yBrick, BRICK_WIDTH, BRICK_HEIGHT);
+        paintBrick(brick, brickColor);
+        add(brick);
+    }
+
+    /**
+     * @return color needs to be used to paint bricks depending on row number.
+     */
+    private Color getRowColor(int rowNumber) {
+        int check = rowNumber%10;
+        return switch (check) {
+            case 0, 1 -> Color.RED;
+            case 2, 3 -> Color.ORANGE;
+            case 4, 5 -> Color.YELLOW;
+            case 6, 7 -> Color.GREEN;
+            case 8, 9 -> Color.CYAN;
+            default -> null;
+        };
+    }
+
+    /**
+     * Paints brick with corresponding color.
+     */
+    private void paintBrick(GRoundRect brick, Color brickColor) {
+        brick.setFilled(true);
+        brick.setColor(brickColor);
+    }
+
+    /**
+     * @return x-coordinate of upper-left corner of first brick in a grid.
+     */
+    private double xStartGridDraw(){
+        return (getWidth() - (N_BRICKS_PER_ROW * BRICK_WIDTH + BRICK_SEP * (N_BRICKS_PER_ROW -1)))/2.0;
+    }
+
+    /**
+     * @return label with game-over text.
+     */
+    private GLabel makeGameOverLabel() {
+        GLabel gameOverLabel = new GLabel("Game Over");
+        gameOverLabel.setFont("Times-Bold-24");
+        gameOverLabel.setLocation(getWidth()/2.0-gameOverLabel.getWidth()/2.0,
+                                getHeight()/2.0 - gameOverLabel.getDescent());
+        return gameOverLabel;
+    }
+
+    /**
+     * @return label with win text.
+     */
+    private GLabel makeWinLabel(){
+        GLabel winLabel = new GLabel("You WON!");
+        winLabel.setFont("Times-Bold-24");
+        winLabel.setLocation(getWidth()/2.0 - winLabel.getWidth()/2.0,
+                                getHeight()/2.0 - winLabel.getDescent());
+        return winLabel;
+    }
+}
