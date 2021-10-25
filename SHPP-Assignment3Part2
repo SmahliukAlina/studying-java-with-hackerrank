@@ -1,0 +1,76 @@
+package com.shpp.p2p.cs.asmahliuk.assignment3;
+
+import com.shpp.cs.a.console.TextProgram;
+
+/**
+ * File: Assignment3Part2.java
+ * ----------------------------------
+ * This program is created for showing The Collatz conjecture, also known as Syracuse Problem.
+ *
+ * "The Collatz conjecture is a conjecture in mathematics that concerns sequences defined as follows:
+ * start with any positive integer n.
+ * Then each term is obtained from the previous term as follows: if the previous term is even,
+ * the next term is one half of the previous term.
+ * If the previous term is odd, the next term is 3 times the previous term plus 1.
+ * The conjecture is that no matter what value of n, the sequence will always reach 1." (Wikipedia)
+ */
+public class Assignment3Part2 extends TextProgram {
+
+    /*
+    * Main method.
+    * Shows changes of inputted positive integer number according to terms of The Collatz conjecture,
+    * also known as Syracuse Problem.
+     */
+    @Override
+    public void run() {
+
+        calculateSyracuseProblem(inputNumber());
+
+    }
+
+    /*
+    * User input.
+    * Gets number from user by console input.
+    * Checks if it is corresponded to terms of input, and claims warning if it isn`t.
+    * Returns number inputted correctly.
+     */
+    private int inputNumber() {
+        int number = -1;
+        boolean check = false;
+
+        while (!check){
+            print("Number must be positive integer. Enter a number: ");
+            number = readInt();
+
+            if (number <= 0) {
+                println("Number can`t be below or equals 0.");
+            }
+            else {
+                check = true;
+            }
+        }
+
+        return number;
+    }
+
+    /*
+    * Calculates changes of inputted number according to terms of The Collatz conjecture,
+    * also known as Syracuse Problem:
+    * - if number is even - divides it on 2;
+    * - if number is odd - multiplies it on 3 and add 1 to the result.
+    * Repeats above actions until result will equal to 1.
+     */
+    private void calculateSyracuseProblem(int number) {
+        while (number != 1) {
+            if (number%2 == 0){
+                println(number + " is even so I take half: "+ (number/2));
+                number/=2;
+            }
+            else {
+                println(number + " is odd so I make 3n + 1: "+ (3*number+1));
+                number = 3*number+1;
+            }
+        }
+        print("The End.");
+    }
+}
