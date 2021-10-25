@@ -1,0 +1,117 @@
+package com.shpp.p2p.cs.asmahliuk.assignment3;
+
+import acm.graphics.GFillable;
+import acm.graphics.GRect;
+import com.shpp.cs.a.graphics.WindowProgram;
+
+import java.awt.*;
+
+/**
+ * File: Assignment3Part4.java
+ * ----------------------------------
+ * This program is created for drawing pyramid with given amount of bricks in the base,
+ * controlled by corresponding constant.
+ * Dimensions of bricks controlled by constants, also.
+ *
+ * Each next row of pyramid has one less brick than previous one,
+ * pyramid is centered by x-axis and located at the "bottom" of application window.
+ */
+public class Assignment3Part4 extends WindowProgram {
+    /*
+     * These constants control amount of bricks in the base of pyramid,
+     * and bricks dimensions, respectively.
+     */
+    private static final double BRICK_HEIGHT = 40;
+    private static final double BRICK_WIDTH = 80;
+    private static final int BRICKS_IN_BASE = 8;
+
+    /*
+     * With these constants you may control the color of pyramid
+     * setting the color of bound of each brick
+     * and painting bricks with chosen color of fill, if needed.
+     */
+    private static final Color BRICK_BOUND_COLOR = Color.BLACK;
+    private static final Color BRICK_PAINT_COLOR = Color.ORANGE;
+    private static final boolean IS_BRICK_PAINTED = true;
+
+    /*
+     * These constants set approximate width and height of the application window.
+     */
+    public static final int APPLICATION_WIDTH = 800;
+    public static final int APPLICATION_HEIGHT = 500;
+    
+    
+    /*
+    * Main method.
+    * Creates pyramid with given parameters.
+     */
+    @Override
+    public void run() {
+
+        createPyramid (BRICK_HEIGHT, BRICK_WIDTH, BRICKS_IN_BASE);
+    }
+
+    /*
+    * Creates pyramid by rows.
+    * Uses method getYStartRowCoordinate() to set y-coordinate of upper-left corner of first brick in a row.
+     */
+    private void createPyramid(double brickHeight, double brickWidth, int bricksInBase) {
+        int bricksInRow = bricksInBase;
+        for (int i = 1; i <= bricksInBase; i++){
+            createRow(brickHeight, brickWidth, bricksInRow, getYStartRowCoordinate(i, brickHeight));
+            bricksInRow--;
+        }
+    }
+
+    /*
+    * Creates row of pyramid, with given amount of bricks in a row,
+    * dimensions of bricks, and y-coordinate of upper-left corner of first brick in a row.
+    * Uses method getXStartRowCoordinate() to set x-coordinate of upper-left corner of first brick in a row.
+     */
+    private void createRow(double brickHeight, double brickWidth, int bricksInRow, double startYRowCoordinate) {
+        double startXBrickCoordinate = getXStartRowCoordinate(bricksInRow, brickWidth);
+        for (int i = 1 ; i <= bricksInRow ; i++ ){
+            createBrick(brickHeight, brickWidth, startXBrickCoordinate, startYRowCoordinate);
+            startXBrickCoordinate += brickWidth;
+        }
+    }
+
+    /*
+    * Creates brick with given parameters.
+    * Paints bound of brick with color set by constant BRICK_BOUND_COLOR.
+    * Uses method paintBrick() to fill brick with a chosen color, set by BRICK_PAINT_COLOR.
+     */
+    private void createBrick(double brickHeight, double brickWidth, double xStartPoint, double yStartPoint) {
+        GRect brick  = new GRect(xStartPoint, yStartPoint, brickWidth, brickHeight);
+        brick.setColor(BRICK_BOUND_COLOR);
+        paintBrick(brick, BRICK_PAINT_COLOR);
+        add(brick);
+    }
+
+    /*
+    * Paints brick fill with given color.
+     */
+    private void paintBrick(GFillable figure, Color brickPaintColor) {
+        figure.setFilled(IS_BRICK_PAINTED);
+        figure.setFillColor(brickPaintColor);
+    }
+
+
+    /*
+    * Gets x-coordinate of upper-left corner of first brick in a row to center pyramid by x-axis.
+    * Depends on amount of bricks in a row and bricks width.
+     */
+    private double getXStartRowCoordinate(int bricksInRow, double brickWidth){
+
+        return (getWidth() - bricksInRow * brickWidth)/2.0;
+    }
+
+    /*
+     * Gets y-coordinate of upper-left corner of first brick in a row
+     * to locate pyramid to "bottom" of application window.
+     */
+    private double getYStartRowCoordinate(int numRow, double brickHeight){
+
+        return getHeight() - numRow * brickHeight;
+    }
+}
