@@ -1,0 +1,151 @@
+package com.shpp.p2p.cs.asmahliuk.assignment5;
+
+import com.shpp.cs.a.console.TextProgram;
+
+import java.util.ArrayList;
+
+
+/**
+ * File: Assignment5Part2.java
+ * ----------------------------------
+ * Made for adding two numbers represented as a Strings -
+ * represents the result as a String too.
+ */
+public class Assignment5Part2 extends TextProgram {
+
+    /**
+     * Gets an input from user - as two strings of non-negative integers
+     * and outputs result of summing this two strings as a string.
+     */
+    @Override
+    public void run() {
+
+        while (true) {
+            String n1 = readLine("Enter first number:  ");
+            String n2 = readLine("Enter second number: ");
+            println(n1 + " + " + n2 + " = " + addNumericStrings(n1, n2));
+            println();
+        }
+    }
+
+    /**
+     * Given two string representations of non-negative integers, adds the
+     * numbers represented by those strings and returns the result.
+     *
+     * @param n1 The first number.
+     * @param n2 The second number.
+     * @return A String representation of n1 + n2
+     */
+    private String addNumericStrings(String n1, String n2){
+
+        return checkStrLengthAndGetResult(n1, n2);
+    }
+
+    /**
+     * Checks what string is shorter, makes both strings equal length
+     * and returns the result represented as a string of added numbers.
+     *
+     * @param n1 The first number
+     * @param n2 The second number
+     * @return The sum of two given numbers represented as a string.
+     */
+    private String checkStrLengthAndGetResult(String n1, String n2) {
+
+        if (n1.length() >= n2.length()){
+            return getResult( getRevStrResult ( n1, makeLengthStrEqual (n1.length(), n2) ) );
+        }
+        else {
+            return getResult( getRevStrResult ( makeLengthStrEqual (n2.length(), n1), n2 ) );
+        }
+    }
+
+    /**
+     * Get two strings with equal length. Add numbers character by character from the end to beginning,
+     * casting them to integer type and remembers the result by adding it to ArrayList
+     * (also remembers additional rank if the sum bigger than 10).
+     * Makes a reversed sum of numbers represented as an ArrayList
+     * and returns it represented as a String.
+     *
+     * @param firstStr first given numeric string to add.
+     * @param secondStr second given numeric string to add.
+     * @return reversed string of summed numbers.
+     */
+    private String getRevStrResult(String firstStr, String secondStr) {
+        ArrayList<Integer> revSumArr = new ArrayList<>();
+        int rank = 0;
+        int elementCounter = 0;
+        for (int i = firstStr.length()-1 ; i >= 0 ; i--){
+
+            int value = (charToInt(firstStr.charAt(i)) + charToInt(secondStr.charAt(i))) + rank;
+
+            if (value >= 10) {
+                revSumArr.add( elementCounter++ , value % 10 );
+                rank = value / 10;
+            }
+            else {
+                revSumArr.add( elementCounter++ , value );
+                rank = 0;
+            }
+        }
+
+        if (rank > 0) {
+            revSumArr.add(elementCounter , rank);
+        }
+
+        return getStringFromArrayList(revSumArr);
+    }
+
+    /**
+     * Makes a String from ArrayList.
+     *
+     * @param arrayResult ArrayList with sum of two numbers in reversed way.
+     * @return Sum of two numbers in reversed way represented as a String.
+     */
+    private String getStringFromArrayList(ArrayList<Integer> arrayResult) {
+        StringBuilder stringResult = new StringBuilder();
+        for (Integer arrayElement : arrayResult) {
+            stringResult.append(arrayElement);
+        }
+        return stringResult.toString();
+    }
+
+    /**
+     * Gets a result of summing two numeric strings -
+     * by reversing given string to get result with right positioned characters.
+     *
+     * @param reversResult given result of a summing of two numbers, represented in reversed form.
+     * @return result of summing as a String with right positioned characters.
+     */
+    private String getResult(String reversResult) {
+        String result  = "";
+        for (int i = reversResult.length()-1 ; i >= 0 ; i--){
+            result += reversResult.charAt(i);
+        }
+        return result;
+    }
+
+    /**
+     * Adds required amount of 0 to the beginning of shorter string to make length of inputted strings equal.
+     *
+     * @param reqLength required length of string - equal the length of longer inputted string.
+     * @param shortStr shorter string, which lengths need to be made equal the longer one.
+     * @return shorter string with 0 at the beginning, and required length.
+     */
+    private String makeLengthStrEqual(int reqLength, String shortStr) {
+        String zeroStr = "";
+        for (int i = 0 ; i < reqLength-shortStr.length() ; i++){
+            zeroStr += "0";
+        }
+        return zeroStr + shortStr;
+    }
+
+    /**
+     * Makes from character - value of integer type.
+     * @param givenChar - char required to be an integer.
+     * @return integer got from given character.
+     */
+    private int charToInt(char givenChar){
+        return givenChar - '0';
+    }
+}
+
