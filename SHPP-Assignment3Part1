@@ -1,0 +1,111 @@
+package com.shpp.p2p.cs.asmahliuk.assignment3;
+
+import com.shpp.cs.a.console.TextProgram;
+
+/**
+ * File: Assignment3Part1.java
+ * ----------------------------------
+ * This program is created for helping people to maintain their cardiovascular health
+ * and normal blood pressure level.
+ *
+ * Doctors recommend to make exercises at least 5 days a week
+ * for 30 minutes a day for maintaining cardiovascular health.
+ * And at least 3 days a week for 40 minutes to keep blood pressure level normal.
+ */
+public class Assignment3Part1 extends TextProgram {
+
+    /*
+     * Constants specify minimum exercises day time for cardiovascular health (CV health),
+     * and blood pressure (BP health), respectively.
+     * According to med recommendations.
+     */
+    private static final int EX_TIME_STAND_CV_HEALTH = 30;
+    private static final int EX_TIME_STAND_BP_HEALTH = 40;
+
+    /*
+     * Constants specify minimum amount days a week to make exercises for cardiovascular health (CV health),
+     * and blood pressure (BP health), respectively.
+     * According to med recommendations.
+     */
+    private static final int EX_DAYS_STAND_CV_HEALTH = 5;
+    private static final int EX_DAYS_STAND_BP_HEALTH = 3;
+
+    /*
+     * Main method.
+     * Helps user to get recommendations about amount daily exercises
+     * a week according to user input to keep healthy.
+     */
+    @Override
+    public void run() {
+
+        getRecommendationsAccordingToInput();
+
+    }
+
+    /*
+     * exerciseDayTime[] -  keeps time of exercises a day inputted by user.
+     * cardioCounter - counts days, when exercise time upper or equals EX_TIME_STAND_CV_HEALTH.
+     * bloodPresCounter - counts days, when exercise time upper or equals EX_TIME_STAND_BP_HEALTH.
+     */
+    private void getRecommendationsAccordingToInput() {
+        int[] exerciseDayTime = new int[7];
+        int cardioCounter = 0;
+        int bloodPresCounter = 0;
+
+        /*
+        * User input of daily time of exercises for a week (7 days).
+        * If inputted value below zero, claims warning and keeps asking for a correct value.
+         */
+        for (int i = 0; i<exerciseDayTime.length; i++){
+
+            boolean check = false;
+            while (!check)
+            {
+                print("How many minutes did you do on day " + (i + 1) + "? ");
+                exerciseDayTime[i] = readInt();
+                check = exerciseDayTime[i] > 0;
+                if (!check) println("Minutes can`t be below zero.");
+            }
+
+            if (exerciseDayTime[i] >= EX_TIME_STAND_CV_HEALTH) cardioCounter++;
+            if (exerciseDayTime[i] >= EX_TIME_STAND_BP_HEALTH) bloodPresCounter++;
+        }
+
+        resultForCardioHealth(cardioCounter);
+        resultForBloodPresHealth(bloodPresCounter);
+    }
+
+    /*
+     * Checks if amount of exercises is enough to maintain CV health
+     * according to med recommendations, and outputs a result.
+     */
+    private void resultForCardioHealth(int cardioCounter) {
+
+        if (cardioCounter >= EX_DAYS_STAND_CV_HEALTH){
+            println("\nCardiovascular health:\n" +
+                    "  Great job! You've done enough exercise for cardiovascular health.");
+        }
+        else {
+            println("\nCardiovascular health:\n" +
+                    "  You needed to train hard for at least "+
+                    (EX_DAYS_STAND_CV_HEALTH-cardioCounter)+" more day(s) a week!");
+        }
+    }
+
+    /*
+     * Checks if amount of exercises is enough to maintain BP level
+     * according to med recommendations, and outputs a result.
+     */
+    private void resultForBloodPresHealth(int bloodPresCounter) {
+
+        if (bloodPresCounter >= EX_DAYS_STAND_BP_HEALTH){
+            println("Blood pressure:\n" +
+                    "  Great job! You've done enough exercise to keep a low blood pressure.");
+        }
+        else {
+            println("Blood pressure:\n" +
+                    "  You needed to train hard for at least "+
+                    (EX_DAYS_STAND_BP_HEALTH-bloodPresCounter)+" more day(s) a week!");
+        }
+    }
+}
