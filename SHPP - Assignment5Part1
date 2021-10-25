@@ -1,0 +1,112 @@
+package com.shpp.p2p.cs.asmahliuk.assignment5;
+
+import com.shpp.cs.a.console.TextProgram;
+
+import java.util.List;
+
+/**
+ * File: Assignment5Part1.java
+ * ----------------------------------
+ * Made for estimating approximate number of syllables in the inputted word.
+ *
+ * It`s counts the amount of vowels at word, and defines the approximate number of syllables respectively the rules -
+ * every vowel counts as a syllable, except:
+ *  - if it is the last letter in the word, and it's 'e' ;
+ *  - if the previous letter was also the vowel.
+ *
+ * As for that rules some words have no syllables such as "me", "the", and that is not right -
+ * this program has an amendment - if there is at least one vowel at the word, it has one syllable.
+ */
+public class Assignment5Part1 extends TextProgram {
+
+    /** Constant specifies the list of vowels, used at this program */
+    private static final List <Character> VOWELS = List.of('a', 'e', 'i' , 'o', 'u', 'y');
+
+    /**
+     * Main method, asked user for the word, and outputs the approximate number of syllables,
+     * corresponding to the rules above.
+     */
+    @Override
+    public void run() {
+
+        /* Repeatedly prompt the user for a word and print out the estimated
+         * number of syllables in that word.
+         */
+        while (true) {
+            String word = readLine("Enter a single word: ");
+            println("  Syllable count: " + syllablesInWord(word));
+        }
+    }
+
+    /**
+     * Given a word, estimates the number of syllables in that word according to the
+     * heuristic specified in the handout.
+     *
+     * @param word A string containing a single word.
+     * @return An estimate of the number of syllables in that word.
+     */
+    private int syllablesInWord(String word){
+
+        String wordToCheck = getWordToCheck(word);
+        int sylCount = 0;
+        int vowCount = 0;
+
+        if (wordToCheck.length() > 1){
+            for (int i = 0 ; i < wordToCheck.length()  ; i++) {
+                if (VOWELS.contains(wordToCheck.charAt(i))) {
+                    vowCount++;
+                    if (i == wordToCheck.length()-1){
+                        if ((wordToCheck.charAt(wordToCheck.length()-1) != 'e') 
+                                && (!VOWELS.contains(wordToCheck.charAt(i-1)))){
+                            sylCount++;
+                        }
+                    }
+                    else if (i < wordToCheck.length()-1 && i!=0) {
+                        if (!VOWELS.contains(wordToCheck.charAt(i-1))) {
+                            sylCount++;
+                        }
+                    } else if (i == 0) {
+                        sylCount++;
+                    }
+                }
+            }
+        } else if (wordToCheck.length() == 1){
+            if (VOWELS.contains(wordToCheck.charAt(0))){
+                vowCount++;
+            }
+        } else {
+            vowCount = 0;
+        }
+
+        return  getResult(sylCount, vowCount);
+    }
+
+    /**
+     * Gives the result of counting number of syllables, considering the amendment to the algorithm.
+     *
+     * @param sylCount number of syllables at given word, counted according to algorithm.
+     * @param vowCount number of vowels at given word.
+     * @return the number of syllables according to the heuristic specified in the handout.
+     */
+    private int getResult(int sylCount, int vowCount) {
+        if (sylCount == 0){
+            if (vowCount != 0){
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return sylCount;
+        }
+    }
+
+    /**
+     * Helps to get the word in a lower case if user inputted letters in different cases.
+     *
+     * @param word inputted by user
+     * @return word with letters at lower case.
+     */
+    private String getWordToCheck(String word) {
+        return word.toLowerCase();
+    }
+}
