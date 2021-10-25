@@ -1,0 +1,239 @@
+package com.shpp.p2p.cs.asmahliuk.assignment3;
+
+import acm.graphics.GFillable;
+import acm.graphics.GOval;
+import acm.graphics.GRect;
+import acm.util.RandomGenerator;
+import com.shpp.cs.a.graphics.WindowProgram;
+
+import java.awt.*;
+
+/**
+ * File: Assignment3Part6.java
+ * ----------------------------------
+ * This program creates an animation for approximately 5 seconds last.
+ * The animation shows the sunrise, sundown and stars lighting at night sky.
+ */
+public class Assignment3Part6 extends WindowProgram {
+
+    /*
+     * These constants set approximate width and height of the application window.
+     */
+    public static final int APPLICATION_WIDTH = 1200;
+    public static final int APPLICATION_HEIGHT = 675;
+
+    private static final double PAUSE_TIME = 1000.0 / 42;
+
+    /*
+    * Main method.
+    * Creates needed elements of animation and adds them to the canvas.
+    * Runs methods creating animation.
+    * Calculates running time of animation and outputs that value to console.
+     */
+    @Override
+    public void run() {
+        long startTime = System.nanoTime();
+        long endTime;
+        long runningTime = 0;
+
+        GOval sun = getSun();
+        GRect sky = getSky();
+        GRect ground = getGround();
+
+        add(sky);
+        add(sun);
+        add(ground);
+        for (int i=0; i<getBuildings().length; i++){
+            add(getBuildings()[i]);
+        }
+
+        getSunRise(System.nanoTime(), sun, sky, 0,0,0);
+        getSunDown(System.nanoTime(), sun, sky, 84,84,252);
+        getStars(System.nanoTime());
+
+        endTime = System.nanoTime();
+        runningTime = (endTime - startTime)/1_000_000;
+
+        System.out.println("Running time of animation is approximately " + runningTime/1000.0 +" seconds last.");
+    }
+
+    /*
+    * Returns element of animation - sun, - as a GOval instance.
+    * Paints sun with Yellow color.
+     */
+    private GOval getSun(){
+        double sunDiameter = getWidth()/8.0;
+        GOval sun = new GOval((getWidth()-sunDiameter)/2.0, 2* getHeight()/3.0, sunDiameter,sunDiameter );
+        sun.setColor(Color.YELLOW);
+        getFill(sun, Color.YELLOW);
+        return sun;
+    }
+
+    /*
+    * Returns element of background - sky, - as a GRect instance.
+    * Sets availability of filling the object as "true".
+     */
+    private GRect getSky(){
+        GRect sky =  new GRect(0,0, getWidth(), getHeight());
+        sky.setFilled(true);
+        return sky;
+    }
+
+    /*
+    * Returns element of background - ground, as a GRect instance.
+    * Paints ground with Black color.
+     */
+    private GRect getGround(){
+        GRect ground = new GRect(0, 2.0*getHeight()/3.0, getWidth(), getHeight()/3.0 );
+        getFill(ground,Color.BLACK);
+        return ground;
+    }
+
+    /*
+    * Returns silhouette of city as an array of GRect instances.
+     */
+    private GRect[] getBuildings(){
+
+        GRect[] buildings = new GRect[10];
+        buildings[0] = getBuilding(getWidth()/30.0,
+                getHeight()/3.0,
+                getWidth()/8.5,
+                getHeight()-getHeight()/3.0);
+        buildings[1] = getBuilding(getWidth()/30.0+buildings[0].getWidth(),
+                getHeight()/1.6,
+                getWidth()/30.0,
+                getHeight()-getHeight()/1.6);
+        buildings[2] = getBuilding(buildings[1].getX() + buildings[1].getWidth(),
+                getHeight()/3.0,
+                getWidth()/6.5,
+                getHeight()-getHeight()/3.0);
+        buildings[3] = getBuilding(buildings[2].getX() + buildings[2].getWidth()+getWidth()/20.0,
+                getHeight()/1.7,
+                getWidth()/40.0,
+                getHeight() - getHeight()/1.7);
+        buildings[4] = getBuilding(buildings[3].getX() + buildings[3].getWidth(),
+                getHeight()/3.0,
+                getWidth()/10.0,
+                getHeight()-getHeight()/3.0);
+        buildings[5] = getBuilding(buildings[4].getX()+buildings[4].getWidth(),
+                getHeight()/1.7,
+                getWidth()/48.0,
+                getHeight()-getHeight()/1.7);
+        buildings[6] = getBuilding(buildings[5].getX()+buildings[5].getWidth(),
+                getHeight()/3.0,
+                getWidth()/12.0,
+                getHeight()-getHeight()/3.0);
+        buildings[7] = getBuilding(buildings[6].getX()+buildings[6].getWidth()+getWidth()/40.0,
+                getHeight()/3.0,
+                getWidth()/6.5,
+                getHeight()-getHeight()/3.0);
+        buildings[8] = getBuilding(buildings[7].getX()+buildings[7].getWidth()+getWidth()/30.0,
+                getHeight()/1.8,
+                getWidth()/34.0,
+                getHeight()-getHeight()/1.8);
+        buildings[9] = getBuilding(buildings[8].getX()+buildings[8].getWidth(),
+                getHeight()/3.0,
+                getWidth()/8.5,
+                getHeight()-getHeight()/3.0);
+
+        return buildings;
+    }
+
+    /*
+    * Returns building as an instance of GRect, painting with Black color,
+    * to make a silhouette of city.
+     */
+    private GRect getBuilding(double xStart, double yStart, double width, double height){
+        GRect building = new GRect(xStart,yStart,width,height);
+        getFill(building, Color.BLACK);
+        return building;
+    }
+
+    /*
+    * Makes first part of animation, with approximately running time for 2 seconds.
+    * Imitates sunrise, when sun moves to top of canvas, behind the city silhouette.
+    * Changes sky color from Black with RGB values (84,84,252) approximately to Dark Blue.
+     */
+    private void getSunRise(long startTime, GOval sun, GRect sky, int r, int g, int b){
+        long runTime = 0;
+        while(runTime < 2000){
+            if(sun.getY()>25){
+                sun.move(0,-5);
+            }
+            if (r<85){
+                sky.setFillColor(getColor(r,g,b));
+            }
+            r+=1;
+            g+=1;
+            b+=3;
+
+            pause(PAUSE_TIME);
+            runTime = (System.nanoTime()-startTime)/1_000_000;
+        }
+    }
+
+    /*
+     * Makes second part of animation, with approximately running time for 2 seconds.
+     * Imitates sundown, when sun moves to down of canvas, behind the city silhouette.
+     * Changes sky color from Light Blue with RGB values (0,0,0) approximately to Light Blue.
+     */
+    private void getSunDown(long startTime, GOval sun, GRect sky, int r, int g, int b){
+        long runTime = 0;
+        while(runTime < 2000){
+            if(sun.getY()<getHeight()){
+                sun.move(0,5);
+            }
+            if(r>0){
+                sky.setFillColor(getColor(r,g,b));
+            }
+            r-=1;
+            g-=1;
+            b-=2;
+
+            pause(PAUSE_TIME);
+            runTime = (System.nanoTime()-startTime)/1_000_000;
+        }
+    }
+
+    /*
+    * Returns new Color with given R, G, B parameters.
+     */
+    private Color getColor (int r, int g, int b){
+        return new Color(r,g,b);
+    }
+
+    /*
+    * Makes third part of animation, with approximately running time for 1 second.
+    * Randomly generates (x,y)-coordinates of star, and adds it to the sky.
+     */
+    private void getStars(long startTime){
+        long runTime = 0;
+        RandomGenerator rGen = new RandomGenerator();
+
+        while(runTime<1000){
+            double xPosition = rGen.nextDouble(0, getWidth());
+            double yPosition = rGen.nextDouble(0, getHeight()/3.0);
+            add(getStar(xPosition,yPosition));
+            pause(PAUSE_TIME/5);
+            runTime = (System.nanoTime()-startTime)/1_000_000;
+        }
+    }
+
+    /*
+    * Returns star as GOval instance, painted with White color.
+     */
+    private GOval getStar(double x, double y){
+        GOval star = new GOval(x,y,1,1);
+        star.setColor(Color.WHITE);
+        getFill(star, Color.WHITE);
+        return star;
+    }
+
+    /*
+    * Fills given figure with given color.
+     */
+    private void getFill(GFillable figure, Color color){
+        figure.setFilled(true);
+        figure.setFillColor(color);
+    }
+}
