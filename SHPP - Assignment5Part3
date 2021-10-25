@@ -1,0 +1,141 @@
+package com.shpp.p2p.cs.asmahliuk.assignment5;
+
+import acm.util.ErrorException;
+import com.shpp.cs.a.console.TextProgram;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/**
+ * File: Assignment5Part3.java
+ * ----------------------------------
+ * Imitates road-game - where you have to think up words containing sequence of letters from the car number.
+ *
+ * Searches words which are contains the letters inputted by user,
+ * in sequence of inputting.
+ * Possible words are contained at the file, specifying by corresponding constant.
+ */
+public class Assignment5Part3 extends TextProgram {
+
+    /** Constant specifying the file containing the list of the words to search in.*/
+    private static final String WORDS_FILE = "assets/en-dictionary.txt";
+
+    /** Constant specifying the amount of letters-sequence user should input.*/
+    private static final int LETTERS_AMOUNT = 3;
+
+    /**
+     * Main method.
+     * Performs searching for words suitable to the user-inputted letters-sequence.
+     */
+    @Override
+    public void run() {
+
+        while (true) {
+            getSearchResult(inputLetters());
+        }
+    }
+
+    /**
+     * Gets letters from user input.
+     * Checks if the amount of letters differs from the needful amount, specified by corresponding constant.
+     * @return Needful amount of letters sequence, inputted by user represented as String.
+     */
+    private String inputLetters() {
+        String letters = readLine("Enter three random letters: ");
+        while (letters.length() != LETTERS_AMOUNT){
+            letters = readLine("Enter three random letters: ");
+        }
+        return letters;
+    }
+
+
+    /**
+     * Reads list of possible suitable words from the file.
+     * Converts letters-sequence, inputted as a String, to char array, converting letters to lower-case, first.
+     * Performs searching of suitable words by given letters-sequence and outputs the result.
+     *
+     * @param letters sequence of letters inputted by user,
+     *                used to search words containing that letters in order of inputting.
+     */
+    private void getSearchResult(String letters) {
+
+        HashMap<String, Integer> words = readWordsFile();
+
+        char[] lettersArr = letters.toLowerCase().toCharArray();
+
+        for (char letter : lettersArr) {
+            HashMap <String, Integer> suitableWords = getSuitableWords(words, letter);
+            words.clear();
+            words = suitableWords;
+        }
+
+        outputResult(words);
+    }
+
+    /**
+     * Searches given letter at given list of words (presented as a key-set of hashmap),
+     * searching begins from the index of previously founded letter.
+     *
+     * @param possibleWords hashmap with list of possible suitable words as key-set,
+     *                      and index of previously searched and found letter as a values.
+     * @param letterToSearch letter to search at word.
+     * @return hashmap with list of suitable words as key-set, and index of found letter as a values.
+     */
+    private HashMap <String, Integer> getSuitableWords(HashMap <String, Integer> possibleWords, char letterToSearch){
+        ArrayList<String> words  = new ArrayList<>(possibleWords.keySet());
+        HashMap <String, Integer> result  = new HashMap<>();
+
+        for (String checkWord : words) {
+            int indexLetter = possibleWords.get(checkWord);
+            if (checkWord.substring(indexLetter).indexOf(letterToSearch) != -1) {
+                indexLetter += checkWord.substring(indexLetter).indexOf(letterToSearch)+1;
+                result.put(checkWord, indexLetter);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks if hashmap is not empty, and outputs the amount of founded suitable words, and set of that words.
+     * The other case - outputs message that suitable words didn't find.
+     * @param suitableWords hashmap with founded suitable words as a key-set.
+     */
+    private void outputResult(HashMap <String, Integer> suitableWords) {
+        if (suitableWords.isEmpty()){
+            System.out.println("There are no suitable words.");
+        } else {
+            System.out.println(suitableWords.size()+" suitable word(s). ");
+            System.out.println(suitableWords.keySet());
+        }
+    }
+
+    /**
+     * Reads the words file and returns a hashmap with the words from the file, as key-set,
+     * and initializing the values as 0-s.
+     *
+     * @return The hashmap, with words, in order, as a key-set, and values set by 0-s.
+     */
+    private HashMap<String, Integer> readWordsFile() {
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(WORDS_FILE));
+            HashMap <String, Integer> result = new HashMap<>();
+
+            while (true){
+                String word = br.readLine();
+                if (word == null)
+                    break;
+
+                result.put(word, 0);
+            }
+
+            br.close();
+
+            return result;
+        } catch (IOException e) {
+            throw new ErrorException(e);
+        }
+    }
+}
