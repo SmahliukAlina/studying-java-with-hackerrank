@@ -1,0 +1,84 @@
+package com.shpp.p2p.cs.asmahliuk.assignment3;
+
+import acm.util.RandomGenerator;
+import com.shpp.cs.a.console.TextProgram;
+
+/**
+ * File: Assignment3Part5.java
+ * ----------------------------------
+ * This program is created for imitate playing St.Petersburg game, like casino game.
+ *
+ * Lucky and Sweaty are playing.
+ * At the beginning of the game Sweaty puts 1$ on the table and Lucky throws coin.
+ * If coin lands heads up - Sweaty puts on the table the same amount of money as on the table already.
+ * If coin lands tales up - Lucky gets all the money from the table.
+ * The game continues until Lucky gets more than 20$.
+ */
+public class Assignment3Part5 extends TextProgram {
+
+    /*
+    * Main method.
+    * Imitates playing St.Petersburg game, and outputs how many tries was needed to Lucky to earn $20.
+     */
+    @Override
+    public void run() {
+
+        println("It took "+ playStPetersburgGame() +" games to earn $20." );
+    }
+
+    /*
+    * "Plays" St.Petersburg game. Counts how many tries was needed to earn $20,
+    * using playGame() for imitation process of playing.
+    * Outputs earned money for every try.
+     */
+    private int playStPetersburgGame() {
+
+        int lucky = 0;
+        int count = 0;
+
+        while (lucky <= 20 ) {
+
+            lucky+=playGame();
+            println("Your total is $"+ lucky);
+            count++;
+        }
+
+        return count;
+    }
+
+
+    /*
+    * Plays game from putting first 1$ on the table,
+    * doubles table-money when coin lands heads up: headOrTale==1;
+    * ends game when coin lands tales up: headOrTale==0.
+    * Returns earned money for a game-try.
+     */
+    private int playGame(){
+
+        int table = 1;
+        int headOrTale = 1;
+
+        while (headOrTale == 1) {
+
+            headOrTale = coinFlipping();
+
+            if (headOrTale == 1){
+                table *=  2;
+            }
+        }
+
+        println("This game, you earned $" + table + ".");
+        return table;
+    }
+
+
+    /*
+    * Imitates coin flipping using RandomGenerator instance.
+    * Generates 0 or 1, where 0 is tale, and 1 is head.
+     */
+    private int coinFlipping(){
+
+        RandomGenerator rGen = RandomGenerator.getInstance();
+        return rGen.nextInt(0,1);
+    }
+}
